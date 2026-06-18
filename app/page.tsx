@@ -257,7 +257,9 @@ export default function HomePage() {
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, value }) => `${name}: ₹${value.toFixed(0)}`}
+                      label={({ name, value }) =>
+                        `${name}: ₹${Number(value ?? 0).toFixed(0)}`
+                      }
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
@@ -266,7 +268,11 @@ export default function HomePage() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+                    <Tooltip
+                      formatter={(value) =>
+                        `₹${Number(value ?? 0).toFixed(2)}`
+                      }
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               ) : (
@@ -300,7 +306,11 @@ export default function HomePage() {
                   <CartesianGrid strokeDasharray="3 3" stroke="#d6f3ee" />
                   <XAxis dataKey="period" angle={-45} textAnchor="end" height={100} />
                   <YAxis />
-                  <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+                  <Tooltip
+                    formatter={(value) =>
+                      `₹${Number(value ?? 0).toFixed(2)}`
+                    }
+                  />
                   <Legend />
                   <Line type="monotone" dataKey="gross" stroke="#0f766e" strokeWidth={2} name="Gross Pay" />
                   <Line type="monotone" dataKey="net" stroke="#22c55e" strokeWidth={2} name="Net Pay" />
