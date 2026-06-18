@@ -1,0 +1,34 @@
+{
+  "name": "payroll-roster-system",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.8",
+    "@fullcalendar/interaction": "^6.1.8",
+    "@fullcalendar/react": "^6.1.8",
+    "@fullcalendar/timegrid": "^6.1.8",
+    "@prisma/client": "^5.11.0",
+    "exceljs": "^4.4.0",
+    "next": "15.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-icons": "^4.11.0",
+    "recharts": "^3.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.2",
+    "@types/react": "18.3.6",
+    "@types/react-dom": "18.3.0",
+    "prisma": "^5.11.0",
+    "typescript": "5.5.4"
+  }
+}
