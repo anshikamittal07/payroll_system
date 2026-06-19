@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - payroll-system-app
+name: Build and deploy Node.js app to Azure Web App
 
 on:
   push:
@@ -12,54 +9,50 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '22.x'
+          node-version: '20.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Upload artifact for deployment job
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Build Next.js app
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Zip artifact for deployment
+        run: zip -r release.zip . --exclude "*.git*" --exclude "node_modules/*"
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_80DDB670A42647598F04D79FB52B6C03 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2876D16797F541389A6B5FC3B4CFF3F6 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_304D34F5D9804AC4BDE98E5C8C5D66B5 }}
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: Unzip artifact
+        run: unzip release.zip
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'payroll-system-app'
+          app-name: 'payroll-system-app-fadqfngkafbkcegf'
           slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
-          
