@@ -1,0 +1,12 @@
+{
+  "/api/employees/route": "/api/employees",
+  "/_not-found/page": "/_not-found",
+  "/api/shifts/route": "/api/shifts",
+  "/api/export/route": "/api/export",
+  "/api/payrolls/route": "/api/payrolls",
+  "/page": "/",
+  "/employees/page": "/employees",
+  "/roster/page": "/roster",
+  "/shifts/page": "/shifts",
+  "/payrolls/page": "/payrolls"
+}
