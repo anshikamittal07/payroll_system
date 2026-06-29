@@ -1,4 +1,4 @@
-name: Build and deploy React app to Azure Web App
+name: Build and deploy Next.js app to Azure Web App
  
 on:
   push:
@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./prisma/dev.db
  
     permissions:
       contents: read
@@ -23,16 +25,28 @@ jobs:
           cache: npm
  
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
  
-      - name: Build React app
+      - name: Build Next.js app
         run: npm run build
+
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deploy/.next
+          cp -R .next/standalone/* deploy/
+          cp -R .next/static deploy/.next/static
+          cp package.json package-lock.json next.config.mjs deploy/
+          cp -R prisma deploy/prisma
+          if [ -d public ]; then cp -R public deploy/public; fi
  
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: react-build
-          path: build
+          name: next-app
+          path: deploy
  
  
   deploy:
@@ -48,21 +62,19 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: react-build
+          name: next-app
  
  
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          # client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_80DDB670A42647598F04D79FB52B6C03 }}
-          # tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2876D16797F541389A6B5FC3B4CFF3F6 }}
-          # subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_304D34F5D9804AC4BDE98E5C8C5D66B5 }}
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_80DDB670A42647598F04D79FB52B6C03 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2876D16797F541389A6B5FC3B4CFF3F6 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_304D34F5D9804AC4BDE98E5C8C5D66B5 }}
  
-      - name: Deploy React App
+      - name: Deploy Next.js App
         uses: azure/webapps-deploy@v3
         with:
           app-name: payroll-system-app
           package: .
+          startup-command: node server.js
