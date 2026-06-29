@@ -19,9 +19,9 @@ jobs:
       - uses: actions/checkout@v4
  
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '22.x'
+          node-version: '24.x'
           cache: npm
  
       - name: Install dependencies
@@ -66,7 +66,7 @@ jobs:
  
  
       - name: Login to Azure
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_80DDB670A42647598F04D79FB52B6C03 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2876D16797F541389A6B5FC3B4CFF3F6 }}
